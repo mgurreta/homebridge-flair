@@ -3,6 +3,11 @@
 
 [Flair Smart Vent](https://flair.co/products/vent) plug-in for [Homebridge](https://github.com/nfarina/homebridge) using the Flair API.
 
+## Requirements
+
+- **Node.js**: v18.17.0, v20.9.0, or v22.0.0+
+- **Homebridge**: v1.8.0+ or v2.0.0+
+
 
 # Installation
 

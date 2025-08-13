@@ -15,8 +15,8 @@
     "url": "https://github.com/danielschaffer/homebridge-flair/issues"
   },
   "engines": {
-    "node": ">=10.17.0",
-    "homebridge": ">0.4.53"
+    "node": "^18.17.0 || ^20.9.0 || ^22.0.0",
+    "homebridge": "^1.8.0 || ^2.0.0-beta.0"
   },
   "main": "dist/index.js",
   "scripts": {
@@ -52,14 +52,14 @@
     "@semantic-release/github": "8.0.7",
     "@semantic-release/npm": "9.0.1",
     "@semantic-release/release-notes-generator": "10.0.3",
-    "@types/node": "18.11.18",
+    "@types/node": "^20.0.0",
     "@typescript-eslint/eslint-plugin": "5.47.1",
     "@typescript-eslint/parser": "5.47.1",
     "eslint": "8.31.0",
-    "homebridge": "1.6.0",
+    "homebridge": "^2.0.0-beta.0",
     "nodemon": "2.0.20",
     "rimraf": "3.0.2",
     "ts-node": "10.9.1",
-    "typescript": "4.9.4"
+    "typescript": "^5.0.0"
   }
 }

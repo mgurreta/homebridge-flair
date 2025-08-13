@@ -30,8 +30,8 @@ import {FlairStructurePlatformAccessory} from './structurePlatformAccessory';
  * parse the user config and discover/register accessories with Homebridge.
  */
 export class FlairPlatform implements DynamicPlatformPlugin {
-  public readonly Service = this.api.hap.Service;
-  public readonly Characteristic = this.api.hap.Characteristic;
+  public readonly Service;
+  public readonly Characteristic;
 
   // this is used to track restored cached accessories
   public readonly accessories: PlatformAccessory[] = [];
@@ -53,6 +53,9 @@ export class FlairPlatform implements DynamicPlatformPlugin {
     public readonly config: PlatformConfig,
     public readonly api: API,
   ) {
+    this.Service = this.api.hap.Service;
+    this.Characteristic = this.api.hap.Characteristic;
+    
     this.log.debug('Finished initializing platform:', this.config.name);
 
     if (!this.validConfig()) {
@@ -141,8 +144,8 @@ export class FlairPlatform implements DynamicPlatformPlugin {
         await this.getStructure(),
       );
       this.updateStructureFromStructureReading(structure);
-    } catch (e) {
-      this.log.debug(e as string);
+    } catch (error) {
+      this.log.error('Error getting structure readings:', (error as Error).message);
     }
   }
 
@@ -177,14 +180,16 @@ export class FlairPlatform implements DynamicPlatformPlugin {
     try {
       this.structure = await this.client!.getPrimaryStructure();
     } catch (e) {
-      throw (
-        'There was an error getting your primary flair home from the api: ' +
-        (e as Error).message
-      );
+      const errorMessage = 'There was an error getting your primary flair home from the api: ' +
+        (e as Error).message;
+      this.log.error(errorMessage);
+      throw new Error(errorMessage);
     }
 
     if (!this.structure) {
-      throw 'The structure is not available, this should not happen.';
+      const errorMessage = 'The structure is not available. Please check your Flair account has a primary home configured.';
+      this.log.error(errorMessage);
+      throw new Error(errorMessage);
     }
 
     return this.structure!;
@@ -215,30 +220,40 @@ export class FlairPlatform implements DynamicPlatformPlugin {
     this.accessories.push(accessory);
     this.log.info('Restoring accessory from cache:', accessory.displayName);
 
-    if (accessory.context.type === Puck.type) {
-      this.log.info('Restoring puck from cache:', accessory.displayName);
-      accessory.context.device = plainToClass(Puck, accessory.context.device);
-      new FlairPuckPlatformAccessory(this, accessory, this.client!);
-    } else if (accessory.context.type === Vent.type) {
-      this.log.info('Restoring vent from cache:', accessory.displayName);
-      accessory.context.device = plainToClass(Vent, accessory.context.device);
-      new FlairVentPlatformAccessory(this, accessory, this.client!);
-    } else if (accessory.context.type === Room.type) {
-      this.log.info('Restoring room from cache:', accessory.displayName);
-      accessory.context.device = plainToClass(Room, accessory.context.device);
-      const structure = await this.getStructure();
-      this.rooms.push(
-        new FlairRoomPlatformAccessory(
-          this,
-          accessory,
-              this.client!,
-              structure,
-        ),
-      );
-    } else if (accessory.context.type === Structure.type) {
-      this.log.info('Restoring structure from cache:', accessory.displayName);
-      accessory.context.device = plainToClass(Structure, accessory.context.device);
-      this.primaryStructureAccessory = new FlairStructurePlatformAccessory(this, accessory, this.client!);
+    try {
+      if (accessory.context.type === Puck.type) {
+        this.log.info('Restoring puck from cache:', accessory.displayName);
+        accessory.context.device = plainToClass(Puck, accessory.context.device);
+        new FlairPuckPlatformAccessory(this, accessory, this.client!);
+      } else if (accessory.context.type === Vent.type) {
+        this.log.info('Restoring vent from cache:', accessory.displayName);
+        accessory.context.device = plainToClass(Vent, accessory.context.device);
+        new FlairVentPlatformAccessory(this, accessory, this.client!);
+      } else if (accessory.context.type === Room.type) {
+        this.log.info('Restoring room from cache:', accessory.displayName);
+        accessory.context.device = plainToClass(Room, accessory.context.device);
+        try {
+          const structure = await this.getStructure();
+          this.rooms.push(
+            new FlairRoomPlatformAccessory(
+              this,
+              accessory,
+                  this.client!,
+                  structure,
+            ),
+          );
+        } catch (error) {
+          this.log.error('Failed to restore room accessory due to structure error:', accessory.displayName, (error as Error).message);
+          // Remove the problematic accessory from cache
+          await this.api.unregisterPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
+        }
+      } else if (accessory.context.type === Structure.type) {
+        this.log.info('Restoring structure from cache:', accessory.displayName);
+        accessory.context.device = plainToClass(Structure, accessory.context.device);
+        this.primaryStructureAccessory = new FlairStructurePlatformAccessory(this, accessory, this.client!);
+      }
+    } catch (error) {
+      this.log.error('Error configuring accessory:', accessory.displayName, (error as Error).message);
     }
   }
 
