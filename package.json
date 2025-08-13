@@ -1,65 +1,60 @@
 {
   "displayName": "Homebridge Flair",
-  "name": "@ds-flair/homebridge-flair",
-  "version": "0.0.0-development",
-  "publishConfig": {
-    "registry": "https://registry.npmjs.org/"
-  },
+  "name": "homebridge-flair",
+  "version": "1.4.0",
   "description": "Brings the flair smart vents into homekit",
   "license": "ISC",
   "repository": {
     "type": "git",
-    "url": "git://github.com/danielschaffer/homebridge-flair.git"
+    "url": "https://github.com/keithah/homebridge-flair.git"
   },
   "bugs": {
-    "url": "https://github.com/danielschaffer/homebridge-flair/issues"
+    "url": "https://github.com/keithah/homebridge-flair/issues"
   },
+  "homepage": "https://github.com/keithah/homebridge-flair#readme",
+  "changelog": "https://github.com/keithah/homebridge-flair/blob/main/CHANGELOG.md",
   "engines": {
-    "node": "^18.17.0 || ^20.9.0 || ^22.0.0",
-    "homebridge": "^1.8.0 || ^2.0.0-beta.0"
+    "node": ">=18.0.0",
+    "homebridge": ">=1.8.0"
   },
   "main": "dist/index.js",
   "scripts": {
     "lint": "eslint src/**.ts --max-warnings=0",
     "lint:fix": "eslint --fix src/**",
     "watch": "npm run build && npm link && nodemon",
-    "build": "rimraf ./dist && tsc"
+    "build": "rimraf ./dist && tsc",
+    "clean": "rimraf ./dist",
+    "prepublishOnly": "npm run clean && npm run build"
   },
-  "release": {
-    "branches": [
-      "main"
-    ],
-    "plugins": [
-      "@semantic-release/commit-analyzer",
-      "@semantic-release/release-notes-generator",
-      "@semantic-release/npm",
-      "@semantic-release/github"
-    ]
-  },
+  "files": [
+    "dist",
+    "config.schema.json",
+    "CHANGELOG.md",
+    "README.md"
+  ],
   "keywords": [
     "homebridge-plugin",
-    "flair"
+    "flair",
+    "smart-vents",
+    "homekit"
   ],
   "dependencies": {
     "class-transformer": "^0.5.1",
     "@ds-flair/flair-api-ts": "0.0.0-development",
     "reflect-metadata": "^0.1.13"
   },
+  "peerDependencies": {
+    "homebridge": ">=1.8.0"
+  },
   "devDependencies": {
-    "@semantic-release/changelog": "6.0.2",
-    "@semantic-release/commit-analyzer": "9.0.2",
-    "@semantic-release/git": "10.0.1",
-    "@semantic-release/github": "8.0.7",
-    "@semantic-release/npm": "9.0.1",
-    "@semantic-release/release-notes-generator": "10.0.3",
-    "@types/node": "^20.0.0",
+    "@types/node": "^24.1.0",
     "@typescript-eslint/eslint-plugin": "5.47.1",
     "@typescript-eslint/parser": "5.47.1",
     "eslint": "8.31.0",
-    "homebridge": "^2.0.0-beta.0",
+    "homebridge": "^1.11.0",
     "nodemon": "2.0.20",
     "rimraf": "3.0.2",
     "ts-node": "10.9.1",
-    "typescript": "^5.0.0"
+    "typescript": "^5.8.0"
   }
 }
