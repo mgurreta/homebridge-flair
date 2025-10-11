@@ -17,12 +17,12 @@ import {
   Room,
   Structure,
   StructureHeatCoolMode,
-  Client,
   Model,
 } from '@ds-flair/flair-api-ts';
 import { plainToClass } from 'class-transformer';
 import { getRandomIntInclusive } from './utils';
 import {FlairStructurePlatformAccessory} from './structurePlatformAccessory';
+import { FlairApiClient } from './flairApiClient';
 
 /**
  * HomebridgePlatform
@@ -36,7 +36,7 @@ export class FlairPlatform implements DynamicPlatformPlugin {
   // this is used to track restored cached accessories
   public readonly accessories: PlatformAccessory[] = [];
 
-  private client?: Client;
+  private client?: FlairApiClient;
 
   public structure?: Structure;
 
@@ -62,12 +62,13 @@ export class FlairPlatform implements DynamicPlatformPlugin {
       return;
     }
 
-    this.client = new Client(
-      this.config.clientId,
-      this.config.clientSecret,
-      this.config.username,
-      this.config.password,
-    );
+    this.client = new FlairApiClient({
+      clientId: this.config.clientId,
+      clientSecret: this.config.clientSecret,
+      username: this.config.username,
+      password: this.config.password,
+      logger: this.log,
+    });
 
     // When this event is fired it means Homebridge has restored all cached accessories from disk.
     // Dynamic Platform plugins should only register new accessories after this event was fired,
@@ -265,7 +266,7 @@ export class FlairPlatform implements DynamicPlatformPlugin {
   async discoverDevices(): Promise<void> {
     let currentUUIDs: string[] = [];
 
-    const promisesToResolve: [Promise<string[]>?] = [];
+    const promisesToResolve: Promise<string[]>[] = [];
 
     if (this.config.ventAccessoryType !== VentAccessoryType.Hidden) {
       promisesToResolve.push(this.addDevices(await this.client!.getVents()));
@@ -280,7 +281,7 @@ export class FlairPlatform implements DynamicPlatformPlugin {
         this.addDevices(
           (await this.client!.getRooms()).filter((value: Room) => {
             return value.pucksInactive === 'Active';
-          }) as [Room],
+          }),
         ),
       );
     }
@@ -289,9 +290,9 @@ export class FlairPlatform implements DynamicPlatformPlugin {
       promisesToResolve.push(this.addDevices(await this.client!.getPucks()));
     }
 
-    const uuids : (string[] | undefined)[] = await Promise.all(promisesToResolve);
+    const uuids: string[][] = await Promise.all(promisesToResolve);
 
-    currentUUIDs = currentUUIDs.concat(...uuids as string[][]);
+    currentUUIDs = currentUUIDs.concat(...uuids);
 
     //Loop over the current uuid's and if they don't exist then remove them.
     for (const accessory of this.accessories) {
@@ -305,7 +306,7 @@ export class FlairPlatform implements DynamicPlatformPlugin {
     }
   }
 
-  async addDevices(devices: [Model]): Promise<string[]> {
+  async addDevices(devices: Model[]): Promise<string[]> {
     const currentUUIDs: string[] = [];
 
     // loop over the discovered devices and register each one if it has not already been registered

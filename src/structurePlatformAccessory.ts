@@ -7,7 +7,8 @@ import {
 } from 'homebridge';
 
 import {FlairPlatform} from './platform';
-import {Structure, StructureHeatCoolMode, Client} from '@ds-flair/flair-api-ts';
+import {Structure, StructureHeatCoolMode} from '@ds-flair/flair-api-ts';
+import { FlairApiClient } from './flairApiClient';
 
 /**
  * Platform Accessory
@@ -18,14 +19,14 @@ export class FlairStructurePlatformAccessory {
   private accessoryInformationService: Service;
   private thermostatService: Service;
 
-  private client: Client;
+  private client: FlairApiClient;
   private structure: Structure;
 
 
   constructor(
         private readonly platform: FlairPlatform,
-        private readonly accessory: PlatformAccessory,
-        client: Client,
+  private readonly accessory: PlatformAccessory,
+  client: FlairApiClient,
   ) {
     this.structure = this.accessory.context.device;
     this.client = client;

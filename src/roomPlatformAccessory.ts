@@ -7,8 +7,9 @@ import {
 } from 'homebridge';
 
 import {FlairPlatform} from './platform';
-import {Room, Structure, StructureHeatCoolMode, Client} from '@ds-flair/flair-api-ts';
+import {Room, Structure, StructureHeatCoolMode} from '@ds-flair/flair-api-ts';
 import {getRandomIntInclusive} from './utils';
+import { FlairApiClient } from './flairApiClient';
 
 /**
  * Platform Accessory
@@ -19,15 +20,15 @@ export class FlairRoomPlatformAccessory {
   private accessoryInformationService: Service;
   private thermostatService: Service;
 
-  private client: Client;
+  private client: FlairApiClient;
   private room: Room;
   private structure: Structure;
 
 
   constructor(
         private readonly platform: FlairPlatform,
-        private readonly accessory: PlatformAccessory,
-        client: Client,
+  private readonly accessory: PlatformAccessory,
+  client: FlairApiClient,
         structure: Structure,
   ) {
     this.room = this.accessory.context.device;

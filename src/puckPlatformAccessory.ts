@@ -4,8 +4,9 @@ import type {
 } from 'homebridge';
 
 import {FlairPlatform} from './platform';
-import {Puck, Client} from '@ds-flair/flair-api-ts';
+import {Puck} from '@ds-flair/flair-api-ts';
 import {getRandomIntInclusive} from './utils';
+import { FlairApiClient } from './flairApiClient';
 
 /**
  * Platform Accessory
@@ -17,14 +18,14 @@ export class FlairPuckPlatformAccessory {
   private humidityService: Service;
   private accessoryInformationService: Service;
 
-  private client: Client;
+  private client: FlairApiClient;
   private puck: Puck;
 
 
   constructor(
         private readonly platform: FlairPlatform,
-        private readonly accessory: PlatformAccessory,
-        client: Client,
+  private readonly accessory: PlatformAccessory,
+  client: FlairApiClient,
   ) {
     this.puck = this.accessory.context.device;
     this.client = client;
