@@ -6,13 +6,13 @@
   "license": "ISC",
   "repository": {
     "type": "git",
-    "url": "https://github.com/keithah/homebridge-flair.git"
+    "url": "https://github.com/mgurreta/homebridge-flair.git"
   },
   "bugs": {
-    "url": "https://github.com/keithah/homebridge-flair/issues"
+    "url": "https://github.com/mgurreta/homebridge-flair/issues"
   },
-  "homepage": "https://github.com/keithah/homebridge-flair#readme",
-  "changelog": "https://github.com/keithah/homebridge-flair/blob/main/CHANGELOG.md",
+  "homepage": "https://github.com/mgurreta/homebridge-flair#readme",
+  "changelog": "https://github.com/mgurreta/homebridge-flair/blob/main/CHANGELOG.md",
   "engines": {
     "node": ">=18.0.0",
     "homebridge": ">=1.8.0"
