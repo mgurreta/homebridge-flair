@@ -5,7 +5,7 @@ import type {
 
 import {FlairPlatform} from './platform';
 import {Puck} from '@ds-flair/flair-api-ts';
-import {getRandomIntInclusive} from './utils';
+import {getRandomIntInclusive, normalizeRelativeHumidity} from './utils';
 import { FlairApiClient } from './flairApiClient';
 
 /**
@@ -15,7 +15,7 @@ import { FlairApiClient } from './flairApiClient';
  */
 export class FlairPuckPlatformAccessory {
   private temperatureService: Service;
-  private humidityService: Service;
+  private humidityService?: Service;
   private accessoryInformationService: Service;
 
   private client: FlairApiClient;
@@ -46,11 +46,14 @@ export class FlairPuckPlatformAccessory {
       this.puck.currentTemperatureC,
     );
 
-    this.humidityService = this.accessory.getService(this.platform.Service.HumiditySensor)
-          ?? this.accessory.addService(this.platform.Service.HumiditySensor);
-    this.humidityService.setCharacteristic(this.platform.Characteristic.Name, accessory.context.device.name);
-    this.humidityService.setCharacteristic(this.platform.Characteristic.CurrentRelativeHumidity, this.puck.currentHumidity);
-    this.temperatureService.addLinkedService(this.humidityService);
+    const initialRh = normalizeRelativeHumidity(this.puck.currentHumidity);
+    if (initialRh !== undefined) {
+      this.humidityService = this.accessory.getService(this.platform.Service.HumiditySensor)
+            ?? this.accessory.addService(this.platform.Service.HumiditySensor);
+      this.humidityService.setCharacteristic(this.platform.Characteristic.Name, accessory.context.device.name);
+      this.humidityService.setCharacteristic(this.platform.Characteristic.CurrentRelativeHumidity, initialRh);
+      this.temperatureService.addLinkedService(this.humidityService);
+    }
 
     setInterval(async () => {
       await this.getNewPuckReadings();
@@ -76,7 +79,16 @@ export class FlairPuckPlatformAccessory {
 
     // push the new value to HomeKit
     this.temperatureService.updateCharacteristic(this.platform.Characteristic.CurrentTemperature, this.puck.currentTemperatureC);
-    this.humidityService.updateCharacteristic(this.platform.Characteristic.CurrentRelativeHumidity, this.puck.currentHumidity);
+    const rh = normalizeRelativeHumidity(this.puck.currentHumidity);
+    if (rh !== undefined) {
+      if (!this.humidityService) {
+        this.humidityService = this.accessory.getService(this.platform.Service.HumiditySensor)
+              ?? this.accessory.addService(this.platform.Service.HumiditySensor);
+        this.humidityService.setCharacteristic(this.platform.Characteristic.Name, this.puck.name ?? this.accessory.displayName);
+        this.temperatureService.addLinkedService(this.humidityService);
+      }
+      this.humidityService.updateCharacteristic(this.platform.Characteristic.CurrentRelativeHumidity, rh);
+    }
 
       this.accessory.getService(this.platform.Service.AccessoryInformation)!
         .updateCharacteristic(this.platform.Characteristic.FirmwareRevision, String(this.puck.firmwareVersionS));

@@ -8,7 +8,7 @@ import {
 
 import {FlairPlatform} from './platform';
 import {Room, Structure, StructureHeatCoolMode} from '@ds-flair/flair-api-ts';
-import {getRandomIntInclusive} from './utils';
+import {getRandomIntInclusive, normalizeRelativeHumidity} from './utils';
 import { FlairApiClient } from './flairApiClient';
 
 /**
@@ -55,8 +55,11 @@ export class FlairRoomPlatformAccessory {
       .setCharacteristic(
         this.platform.Characteristic.CurrentHeatingCoolingState,
                 this.getCurrentHeatingCoolingStateFromStructureAndRoom(this.structure)!,
-      )
-      .setCharacteristic(this.platform.Characteristic.CurrentRelativeHumidity, this.room.currentHumidity!);
+      );
+    const initialRh = normalizeRelativeHumidity(this.room.currentHumidity);
+    if (initialRh !== undefined) {
+      this.thermostatService.setCharacteristic(this.platform.Characteristic.CurrentRelativeHumidity, initialRh);
+    }
 
     this.thermostatService.getCharacteristic(this.platform.Characteristic.TargetTemperature)
       .on(CharacteristicEventTypes.SET, this.setTargetTemperature.bind(this))
@@ -159,7 +162,6 @@ export class FlairRoomPlatformAccessory {
     this.thermostatService
       .updateCharacteristic(this.platform.Characteristic.CurrentTemperature, this.room.currentTemperatureC!)
       .updateCharacteristic(this.platform.Characteristic.TargetTemperature, this.room.setPointC!)
-      .updateCharacteristic(this.platform.Characteristic.CurrentRelativeHumidity, this.room.currentHumidity!)
       .updateCharacteristic(
         this.platform.Characteristic.TargetHeatingCoolingState,
               this.getTargetHeatingCoolingStateFromStructureAndRoom(this.structure)!,
@@ -168,6 +170,10 @@ export class FlairRoomPlatformAccessory {
         this.platform.Characteristic.CurrentHeatingCoolingState,
               this.getCurrentHeatingCoolingStateFromStructureAndRoom(this.structure)!,
       );
+    const rh = normalizeRelativeHumidity(this.room.currentHumidity);
+    if (rh !== undefined) {
+      this.thermostatService.updateCharacteristic(this.platform.Characteristic.CurrentRelativeHumidity, rh);
+    }
     this.platform.log.debug(
       `Pushed updated current temperature state for ${this.room.name!} to HomeKit:`,
             this.room.currentTemperatureC!,
