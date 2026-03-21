@@ -39,7 +39,6 @@ export class FlairApiClient {
   private token?: OAuthTokenState;
   private pendingAuth?: Promise<void>;
   private readonly scopes: string[];
-  private readonly grantType: string;
   private readonly realm?: string;
   private readonly tokenEndpoints: string[];
 
@@ -64,7 +63,6 @@ export class FlairApiClient {
         Accept: 'application/vnd.api+json, application/json',
       },
     });
-    this.grantType = this.options.grantType ?? 'password';
     this.realm = this.options.realm;
     const defaultEndpoints = ['/oauth2/token', '/oauth/token'];
     this.tokenEndpoints = this.options.tokenEndpoints && this.options.tokenEndpoints.length > 0
@@ -289,6 +287,8 @@ export class FlairApiClient {
     params.append('grant_type', 'refresh_token');
     params.append('refresh_token', this.token.refreshToken);
     params.append('scope', this.scopes.join(' '));
+    params.append('client_id', this.options.clientId);
+    params.append('client_secret', this.options.clientSecret);
 
     const token = await this.postTokenRequest(params);
     this.setTokenState(token);
@@ -337,11 +337,6 @@ export class FlairApiClient {
     this.http.defaults.headers.common.Authorization = `${token.tokenType} ${token.accessToken}`;
   }
 
-  private getBasicAuthHeader(): string {
-    const credentials = `${this.options.clientId}:${this.options.clientSecret}`;
-    return `Basic ${Buffer.from(credentials).toString('base64')}`;
-  }
-
   private buildGrantAttempts(): GrantAttempt[] {
     const attempts: GrantAttempt[] = [];
     const configuredGrant = this.options.grantType;
@@ -351,12 +346,13 @@ export class FlairApiClient {
       return this.dedupeGrantAttempts(attempts);
     }
 
+    // Match flair-api-client-py: client_credentials first on /oauth2/token (form body only).
+    attempts.push(this.createGrantAttempt('client_credentials'));
+
     if (this.options.username && this.options.password) {
       attempts.push(this.createGrantAttempt('password'));
       attempts.push(this.createGrantAttempt('password-realm'));
     }
-
-    attempts.push(this.createGrantAttempt('client_credentials'));
 
     return this.dedupeGrantAttempts(attempts);
   }
@@ -444,7 +440,6 @@ export class FlairApiClient {
   private async postTokenRequest(params: URLSearchParams): Promise<OAuthTokenResponse> {
     const headers = {
       'Content-Type': 'application/x-www-form-urlencoded',
-      Authorization: this.getBasicAuthHeader(),
     };
 
     const body = params.toString();

@@ -35,6 +35,8 @@ Configuration sample (edit `~/.homebridge/config.json`):
 }
 ```
 
+Optional **`oauthGrantType`** (advanced): leave unset for Flair’s normal flow. Use `"password"` or `"password-realm"` only if Flair Support tells you to.
+
 # Obtaining Credentials
 
 In order to use this plugin you will need to obtain a client id and client secret from Flair. 

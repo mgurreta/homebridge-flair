@@ -68,6 +68,9 @@ export class FlairPlatform implements DynamicPlatformPlugin {
       username: this.config.username,
       password: this.config.password,
       logger: this.log,
+      grantType: typeof this.config.oauthGrantType === 'string' && this.config.oauthGrantType.trim() !== ''
+        ? this.config.oauthGrantType.trim()
+        : undefined,
     });
 
     // When this event is fired it means Homebridge has restored all cached accessories from disk.

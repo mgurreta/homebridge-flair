@@ -33,6 +33,13 @@
         "required": true,
         "default": ""
       },
+      "oauthGrantType": {
+        "title": "OAuth grant type (advanced)",
+        "type": "string",
+        "description": "Leave blank: use Flair’s default (client_credentials, then password fallbacks). Set to \"password\" or \"password-realm\" only if Flair Support asks you to.",
+        "required": false,
+        "default": ""
+      },
       "pollInterval": {
         "title": "Poll Interval",
         "type": "number",
