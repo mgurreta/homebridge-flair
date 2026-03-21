@@ -1,7 +1,6 @@
-# homebridge-flair
-[![verified-by-homebridge](https://badgen.net/badge/homebridge/verified/purple)](https://github.com/homebridge/homebridge/wiki/Verified-Plugins)
+# @mgurreta/homebridge-flair
 
-[Flair Smart Vent](https://flair.co/products/vent) plug-in for [Homebridge](https://github.com/nfarina/homebridge) using the Flair API.
+Fork of [homebridge-flair](https://www.npmjs.com/package/homebridge-flair). [Flair Smart Vent](https://flair.co/products/vent) plug-in for [Homebridge](https://github.com/nfarina/homebridge) using the Flair API.
 
 ## Requirements
 
@@ -13,7 +12,7 @@
 
 <!-- 2. Clone (or pull) this repository from github into the same path Homebridge lives (usually `/usr/local/lib/node_modules`). Note: the code currently on GitHub is in beta, and is newer than the latest published version of this package on `npm` -->
 1. Install homebridge using: `npm install -g homebridge`
-2. Install this plug-in using: `npm install -g @ds-flair/homebridge-flair`
+2. Install this plug-in using: `npm install -g @mgurreta/homebridge-flair`
 3. Update your configuration file. See example `config.json` snippet below.
 
 # Configuration

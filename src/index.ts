@@ -8,5 +8,5 @@ import 'reflect-metadata';
  * This method registers the platform with Homebridge
  */
 export = (api: API): void => {
-  api.registerPlatform('homebridge-flair', PLATFORM_NAME, FlairPlatform);
+  api.registerPlatform('@mgurreta/homebridge-flair', PLATFORM_NAME, FlairPlatform);
 }
