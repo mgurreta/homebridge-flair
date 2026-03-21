@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.5.2] - 2026-03-20
+
+### Fixed
+- Avoid Homebridge warnings when Flair omits humidity: only set **Current Relative Humidity** with a valid finite value; add puck humidity sensor only when readings exist
+
 ## [1.5.1] - 2025-03-20
 
 ### Changed
