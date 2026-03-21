@@ -5,7 +5,7 @@
 
 ## Requirements
 
-- **Node.js**: v18.17.0, v20.9.0, or v22.0.0+
+- **Node.js**: v18.17+, v20.9+, v22+, or v24+ (match your Homebridge install)
 - **Homebridge**: v1.8.0+ or v2.0.0+
 
 
