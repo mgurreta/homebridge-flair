@@ -1,7 +1,7 @@
 {
   "displayName": "Homebridge Flair",
   "name": "homebridge-flair",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "description": "Brings the flair smart vents into homekit",
   "license": "ISC",
   "repository": {
@@ -14,8 +14,8 @@
   "homepage": "https://github.com/keithah/homebridge-flair#readme",
   "changelog": "https://github.com/keithah/homebridge-flair/blob/main/CHANGELOG.md",
   "engines": {
-    "node": ">=18.0.0",
-    "homebridge": ">=1.8.0"
+    "node": "^18.17.0 || ^20.9.0 || ^22.0.0 || ^24.0.0",
+    "homebridge": "^1.8.0 || ^2.0.0-beta.0"
   },
   "main": "dist/index.js",
   "scripts": {
@@ -47,7 +47,7 @@
     "reflect-metadata": "^0.1.13"
   },
   "peerDependencies": {
-    "homebridge": ">=1.8.0"
+    "homebridge": "^1.8.0 || ^2.0.0-beta.0"
   },
   "devDependencies": {
     "@types/node": "^24.1.0",
@@ -55,7 +55,7 @@
     "@typescript-eslint/parser": "5.47.1",
     "dotenv": "^16.6.1",
     "eslint": "8.31.0",
-    "homebridge": "^1.11.0",
+    "homebridge": "^1.11.2",
     "nodemon": "2.0.20",
     "rimraf": "3.0.2",
     "ts-node": "10.9.1",

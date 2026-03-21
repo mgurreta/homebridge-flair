@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.1] - 2025-03-20
+
+### Changed
+- Declared [Homebridge v2](https://github.com/homebridge/homebridge/wiki/Updating-To-Homebridge-v2.0) support in `engines` and `peerDependencies` using `^1.8.0 || ^2.0.0-beta.0` (covers 2.x stable once released, and current 2.0 betas)
+- Aligned Node.js `engines` with supported Homebridge runtimes (`^18.17.0 || ^20.9.0 || ^22.0.0 || ^24.0.0`)
+- Enabled TypeScript `skipLibCheck` so the project builds cleanly against Homebridge 2’s transitive dependency typings
+
 ## [1.4.0] - 2025-08-13
 
 ### Fixed
