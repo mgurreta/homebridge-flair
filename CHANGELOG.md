@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.5.3] - 2026-03-20
+
+### Changed
+- OAuth token requests aligned with Flair’s official client: **`client_credentials` first**, credentials **only in the form body** (no `Authorization: Basic`), refresh token flow includes `client_id` / `client_secret` in the body
+- Optional config **`oauthGrantType`** to force `password` or `password-realm` when Flair Support requires it
+
 ## [1.5.2] - 2026-03-20
 
 ### Fixed
